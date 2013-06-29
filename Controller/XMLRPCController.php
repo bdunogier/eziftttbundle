@@ -3,7 +3,7 @@ namespace BD\Bundle\EzIFTTTBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
-use BD\Bundle\EzIFTTTBundle\XmlRpcResponse;
+use BD\Bundle\EzIFTTTBundle\Controller\XmlRpcResponse;
 
 class XMLRPCController extends Controller
 {
@@ -59,7 +59,6 @@ class XMLRPCController extends Controller
                 {
                     switch ( (string)$data->name )
                     {
-                        //this is used for title/description
                         case 'title':
                             $contentCreateStruct->setField( 'name', (string)$data->value->string );
                             break;
