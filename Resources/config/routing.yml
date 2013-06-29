@@ -1,0 +1,9 @@
+bd.eziftttbundle.xmlrpc_endpoint:
+    pattern:  /xmlrpc
+    defaults: { _controller: BDEzIFTTTBundle:XMLRPC:endpoint }
+    methods: [POST]
+
+bd.eziftttbundle.xmlrpc_endpoint2:
+    pattern:  /xmlrpc.php
+    defaults: { _controller: BDEzIFTTTBundle:XMLRPC:endpoint }
+    methods: [POST]
