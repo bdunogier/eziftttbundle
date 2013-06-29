@@ -47,36 +47,14 @@ class XMLRPCController extends Controller
                 }
                 catch ( \Exception $e )
                 {
-                     return new XmlRpcResponse\Success( $e->getMessage(), 403 );
+                     return new XmlRpcResponse\Error( $e->getMessage(), 403 );
                 }
 
                 $contentService = $this->container->get( 'ezpublish.api.service.content' );
-                $contentTypeService = $this->container->get( 'ezpublish.api.service.content_type' );
                 $locationService = $this->container->get( 'ezpublish.api.service.location' );
 
-                $contentCreateStruct = $contentService->newContentCreateStruct(
-                    $contentTypeService->loadContentTypeByIdentifier( 'folder' ),
-                    'eng-GB'
-                );
-
-
-                $contentCreateStruct->setField( 'name', $IFTTTRequest->title );
-
-                $descriptionInnerXml = '';
-                foreach ( explode( "\n", strip_tags( $IFTTTRequest->description ) ) as $descriptionLine )
-                {
-                    $descriptionInnerXml .= "    <paragraph>{$descriptionLine}</paragraph>\n";
-                }
-
-                $descriptionXml = <<< XML
-<section xmlns:image="http://ez.no/namespaces/ezpublish3/image/"
-         xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/"
-         xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/">
-{$descriptionInnerXml}
-</section>
-XML;
-
-                $contentCreateStruct->setField( 'short_description', $descriptionXml );
+                $contentProvider = $this->container->get( 'ezifttt.content_provider' );
+                $contentCreateStruct = $contentProvider->newContentCreateStructFromRequest( $IFTTTRequest );
 
                 /** @var $repository \eZ\Publish\API\Repository\Repository */
                 $repository->sudo( function() use ( $user, $contentCreateStruct, $contentService, $locationService ) {

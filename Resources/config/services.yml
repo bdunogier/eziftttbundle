@@ -1,7 +1,12 @@
 parameters:
-#    b_de_zifttt.example.class: BD\BDeZIFTTTBundle\Example
+    ezifttt.content_provider.simple.class: BD\Bundle\EzIFTTTBundle\ContentProvider\Simple
 
 services:
-#    b_de_zifttt.example:
-#        class: %b_de_zifttt.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+    ezifttt.content_provider:
+        alias: ezifttt.content_provider.simple
+
+    ezifttt.content_provider.simple:
+        class: %ezifttt.content_provider.simple.class%
+        arguments:
+            - @ezpublish.api.service.content
+            - @ezpublish.api.service.content_type
