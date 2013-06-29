@@ -63,10 +63,26 @@ class XMLRPCController extends Controller
                         case 'title':
                             $contentCreateStruct->setField( 'name', (string)$data->value->string );
                             break;
+
+                        case 'description':
+                            $description = strip_tags( (string)$data->value->string );
+
+                            $descriptionXml = <<< XML
+<section xmlns:image="http://ez.no/namespaces/ezpublish3/image/"
+         xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/"
+         xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/">
+    <paragraph>{$description}</paragraph>
+</section>
+XML;
+
+                            $contentCreateStruct->setField( 'short_description', $descriptionXml );
+                            break;
                     }
                 }
 
+                /** @var $repository \eZ\Publish\API\Repository\Repository */
                 $repository->sudo( function( $repository ) use ( $user, $contentCreateStruct, $contentService, $locationService ) {
+                    $repository->setCurrentUser( $user );
                     $content = $contentService->createContent(
                         $contentCreateStruct,
                         array( $locationService->newLocationCreateStruct( 2 ) )
