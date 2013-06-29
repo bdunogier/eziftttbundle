@@ -4,16 +4,27 @@ namespace BD\Bundle\EzIFTTTBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use BD\Bundle\EzIFTTTBundle\Controller\XmlRpcResponse;
+use BD\Bundle\EzIFTTTBundle\IFTTT\RequestParser;
 
 class XMLRPCController extends Controller
 {
     public function endpointAction()
     {
-        $request = $this->container->get( 'request' );
+        file_put_contents(
+            "/tmp/ifttt-request-" . time() . ".xml",
+            $this->container->get( 'request' )->getContent()
+        );
+        try
+        {
+            $requestParser = new RequestParser( $this->container->get( 'request' )->getContent() );
+            $IFTTTRequest = $requestParser->getRequest();
+        }
+        catch ( \Exception $e )
+        {
+            return new XmlRpcResponse\Error( $e->getMessage(), 401 );
+        }
 
-        $requestXml = simplexml_load_string( $request->getContent() );
-
-        switch ( $requestXml->methodName )
+        switch ( $IFTTTRequest->method )
         {
             case 'metaWeblog.getRecentPosts':
                 return new XmlRpcResponse\Success( "<array><data></data></array>" );
@@ -25,16 +36,13 @@ class XMLRPCController extends Controller
             case 'metaWeblog.newPost':
                 $repository = $this->container->get( 'ezpublish.api.repository' );
 
-                //@see http://codex.wordpress.org/XML-RPC_WordPress_API/Posts#wp.newPost
-                //get the parameters from xml
-                $username = (string)$requestXml->params->param[1]->value->string;
-                $password = (string)$requestXml->params->param[2]->value->string;
-
-                $userService = $this->container->get( 'ezpublish.api.service.user' );
-
                 try
                 {
-                    $user = $userService->loadUserByCredentials( $username, $password );
+                    $userService = $this->container->get( 'ezpublish.api.service.user' );
+                    $user = $userService->loadUserByCredentials(
+                        $IFTTTRequest->username,
+                        $IFTTTRequest->password
+                    );
                     $repository->setCurrentUser( $user );
                 }
                 catch ( \Exception $e )
@@ -52,36 +60,26 @@ class XMLRPCController extends Controller
                 );
 
 
-                //@see content in the wordpress docs
-                $content = $requestXml->params->param[3]->value->struct->member;
+                $contentCreateStruct->setField( 'name', $IFTTTRequest->title );
 
-                foreach ( $content as $data )
+                $descriptionInnerXml = '';
+                foreach ( explode( "\n", strip_tags( $IFTTTRequest->description ) ) as $descriptionLine )
                 {
-                    switch ( (string)$data->name )
-                    {
-                        case 'title':
-                            $contentCreateStruct->setField( 'name', (string)$data->value->string );
-                            break;
+                    $descriptionInnerXml .= "    <paragraph>{$descriptionLine}</paragraph>\n";
+                }
 
-                        case 'description':
-                            $description = strip_tags( (string)$data->value->string );
-
-                            $descriptionXml = <<< XML
+                $descriptionXml = <<< XML
 <section xmlns:image="http://ez.no/namespaces/ezpublish3/image/"
          xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/"
          xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/">
-    <paragraph>{$description}</paragraph>
+{$descriptionInnerXml}
 </section>
 XML;
 
-                            $contentCreateStruct->setField( 'short_description', $descriptionXml );
-                            break;
-                    }
-                }
+                $contentCreateStruct->setField( 'short_description', $descriptionXml );
 
                 /** @var $repository \eZ\Publish\API\Repository\Repository */
-                $repository->sudo( function( $repository ) use ( $user, $contentCreateStruct, $contentService, $locationService ) {
-                    $repository->setCurrentUser( $user );
+                $repository->sudo( function() use ( $user, $contentCreateStruct, $contentService, $locationService ) {
                     $content = $contentService->createContent(
                         $contentCreateStruct,
                         array( $locationService->newLocationCreateStruct( 2 ) )
@@ -92,7 +90,7 @@ XML;
                 break;
         }
 
-        return new XmlRpcResponse\Error( "No such method {$requestXml->methodName}", 404 );
+        return new XmlRpcResponse\Error( "No such method {$IFTTTRequest->method}", 404 );
     }
 
     private function createSuccessResponse( $contents )
