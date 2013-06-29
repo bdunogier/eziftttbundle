@@ -17,6 +17,7 @@ use BD\Bundle\EzIFTTTBundle\IFTTT\Request;
  * - request::title is mapped to the folder's name
  * - request::description is mapped to the folder's short_description
  *   HTML tags are stripped from the description, and each line is placed in a paragraph.
+ *
  */
 class Simple extends ContentProvider
 {
@@ -47,5 +48,13 @@ XML;
         $contentCreateStruct->setField( 'short_description', $descriptionXml );
 
         return $contentCreateStruct;
+    }
+
+    /**
+     * The content is located below the Root folder.
+     */
+    public function newLocationCreateStructFromRequest( Request $request )
+    {
+        return $this->locationService->newLocationCreateStruct( 2 );
     }
 }

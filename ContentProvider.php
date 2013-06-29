@@ -12,6 +12,7 @@ namespace BD\Bundle\EzIFTTTBundle;
 use BD\Bundle\EzIFTTTBundle\IFTTT\Request;
 use eZ\Publish\API\Repository\ContentService;
 use eZ\Publish\API\Repository\ContentTypeService;
+use eZ\Publish\API\Repository\LocationService;
 
 abstract class ContentProvider
 {
@@ -25,14 +26,25 @@ abstract class ContentProvider
      */
     protected $contentTypeService;
 
-    public function __construct( ContentService $contentService, ContentTypeService $contentTypeService )
+    /**
+     * @var ContentService
+     */
+    protected $locationService;
+
+    public function __construct( ContentService $contentService, ContentTypeService $contentTypeService, LocationService $locationService )
     {
         $this->contentService = $contentService;
         $this->contentTypeService = $contentTypeService;
+        $this->locationService = $locationService;
     }
 
     /**
      * @eturn ContentCreateStruct
      */
     abstract public function newContentCreateStructFromRequest( Request $request );
+
+    /**
+     * @return LocationCreateStruct
+     */
+    abstract public function newLocationCreateStructFromRequest( Request $request );
 }

@@ -50,20 +50,18 @@ class XMLRPCController extends Controller
                      return new XmlRpcResponse\Error( $e->getMessage(), 403 );
                 }
 
-                $contentService = $this->container->get( 'ezpublish.api.service.content' );
-                $locationService = $this->container->get( 'ezpublish.api.service.location' );
-
                 $contentProvider = $this->container->get( 'ezifttt.content_provider' );
                 $contentCreateStruct = $contentProvider->newContentCreateStructFromRequest( $IFTTTRequest );
+                $locationCreateStruct =  $contentProvider->newLocationCreateStructFromRequest( $IFTTTRequest );
 
                 /** @var $repository \eZ\Publish\API\Repository\Repository */
-                $repository->sudo( function() use ( $user, $contentCreateStruct, $contentService, $locationService ) {
-                    $content = $contentService->createContent(
-                        $contentCreateStruct,
-                        array( $locationService->newLocationCreateStruct( 2 ) )
-                    );
-                    $contentService->publishVersion( $content->versionInfo );
-                } );
+                $contentService = $this->container->get( 'ezpublish.api.service.content' );
+                $content = $contentService->createContent(
+                    $contentCreateStruct,
+                    array( $locationCreateStruct )
+                );
+                $contentService->publishVersion( $content->versionInfo );
+
                 return new XmlRpcResponse\Success( '<string>200</string>' );
                 break;
         }
