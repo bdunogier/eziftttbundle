@@ -1,0 +1,20 @@
+{
+    "name": "bdunogier/eziftttbundle",
+    "description": "IFTTT.com action handler for eZ Publish 5",
+    "license": "GPL-2.0",
+    "authors": [
+        {
+            "name": "Bertrand Dunogier",
+            "homepage": "https://github.com/bdunogier/eziftttbundle"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.3.3",
+        "ezsystems/ezpublish-kernel": "*"
+    },
+    "autoload": {
+        "psr-0": {"BD\\Bundle\\EzIFTTTBundle": "src"}
+    },
+    "target-dir": "BD/Bundle/EzIFTTTBundle"
+}
