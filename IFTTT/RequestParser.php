@@ -20,10 +20,18 @@ class RequestParser
 
     /**
      * @param $xmlString
+     *
+     * @throws \UnexpectedValueException If the XML payload could not be parsed
      */
     public function __construct( $xmlString )
     {
-        $this->simpleXml = simplexml_load_string( $xmlString );
+        if ( ( $this->simpleXml = simplexml_load_string( $xmlString ) ) === false )
+        {
+            $errors = array();
+            foreach( libxml_get_errors() as $error )
+                $errors[] = $error->message;
+            throw new \UnexpectedValueException( "Invalid xmlString argument:" . implode( "\n", $errors ) );
+        }
     }
 
     /**

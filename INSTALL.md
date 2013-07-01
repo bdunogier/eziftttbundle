@@ -61,5 +61,6 @@ to your server and check the response for errors. An example XML request is prov
 You can send this request using CURL as follows:
 
 ```
-curl --form "fileupload=@vendor/bdunogier/eziftttbundle/BD/Bundle/EzIFTTTBundle/Resources/doc/xml-rpc/getRecentPosts.xml" http://ezpublish5/xmlrpc.php
+curl -X POST -d "@vendor/bdunogier/eziftttbundle/BD/Bundle/EzIFTTTBundle/Resources/doc/xml-rpc/getRecentPosts.xml" \
+http://ezpublish5/xmlrpc.php
 ```
