@@ -14,7 +14,7 @@
         "ezsystems/ezpublish-kernel": "*"
     },
     "autoload": {
-        "psr-0": {"BD\\Bundle\\EzIFTTTBundle": "src"}
+        "psr-0": {"BD\\Bundle\\EzIFTTTBundle": ""}
     },
     "target-dir": "BD/Bundle/EzIFTTTBundle"
 }
