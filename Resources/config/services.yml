@@ -1,9 +1,12 @@
 parameters:
     ezifttt.content_provider.simple.class: BD\Bundle\EzIFTTTBundle\ContentProvider\Simple
+    ezifttt.ifttt_handler.class: BD\Bundle\EzIFTTTBundle\IFTTT\Handler
+    ezifttt.content_provider.id: ezifttt.content_provider.simple
+    bdifttt.handler.id: ezifttt.ifttt_handler
 
 services:
     ezifttt.content_provider:
-        alias: ezifttt.content_provider.simple
+        alias: %ezifttt.content_provider.id%
 
     ezifttt.content_provider.simple:
         class: %ezifttt.content_provider.simple.class%
@@ -11,3 +14,11 @@ services:
             - @ezpublish.api.service.content
             - @ezpublish.api.service.content_type
             - @ezpublish.api.service.location
+
+    ezifttt.ifttt_handler:
+        class: %ezifttt.ifttt_handler.class%
+        arguments:
+            - @ezpublish.api.repository
+            - @ezpublish.api.service.content
+            - @ezpublish.api.service.user
+            - @ezifttt.content_provider

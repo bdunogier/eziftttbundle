@@ -9,7 +9,7 @@
 
 namespace BD\Bundle\EzIFTTTBundle;
 
-use BD\Bundle\EzIFTTTBundle\IFTTT\Request;
+use BD\Bundle\IFTTTBundle\IFTTT\Request;
 use eZ\Publish\API\Repository\ContentService;
 use eZ\Publish\API\Repository\ContentTypeService;
 use eZ\Publish\API\Repository\LocationService;
