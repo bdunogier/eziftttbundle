@@ -9,7 +9,7 @@
 namespace BD\Bundle\EzIFTTTBundle\ContentProvider;
 
 use BD\Bundle\EzIFTTTBundle\ContentProvider;
-use BD\Bundle\EzIFTTTBundle\IFTTT\Request;
+use BD\Bundle\IFTTTBundle\IFTTT\Request;
 
 /**
  * Creates a folder out of a Request.
