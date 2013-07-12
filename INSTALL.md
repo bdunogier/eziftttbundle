@@ -8,12 +8,15 @@ be installed.
 ### Using composer
 
 The bundle is registered on packagist. Just run `composer require bdunogier/eziftttbundle` from your ezpublish 5 root
-folder. The only available version at the moment is "@dev" (master), but tags will be added at some point.
+folder. You can check the versions on https://github.com/bdunogier/eziftttbundle/releases. Stable versions are available.
 
 ### Manually
 
 Just check the extension out from github (`git clone git@github.com:bdunogier/eziftttbundle.git`), or download
 the current dev version from https://github.com/bdunogier/eziftttbundle/archive/master.zip.
+
+Note that you'd have to install the requirements (bdunogier/iftttbundle & bdunogier/xmlrpcbundle) manually too. 
+Really, use composer :-)
 
 ## Activation
 
@@ -26,12 +29,15 @@ class EzPublishKernel extends Kernel
     {
         $bundles = array(
             // [...]
-            new BD\Bundle\EzIFTTTBundle\BDEzIFTTTBundle()
+            new BD\Bundle\EzIFTTTBundle\BDEzIFTTTBundle(),
+            new BD\Bundle\EzIFTTTBundle\BDIFTTTBundle(),
+            new BD\Bundle\EzIFTTTBundle\BDXmlRpcBundle()
         );
 
 
-You also need to register the extension's routes by adding these lines to `ezpublish/config/routing.yml` file:
 ```
+
+You also need to register the extension's routes by adding these lines to `ezpublish/config/routing.yml` file:
 
 ```yml
 bd_ezifttt:
